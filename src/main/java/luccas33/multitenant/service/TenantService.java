@@ -1,7 +1,8 @@
 package luccas33.multitenant.service;
 
-import luccas33.multitenant.application.ConnectionProviderImp;
+import luccas33.multitenant.application.MultiTenantConnectionProviderImp;
 import luccas33.multitenant.application.StatusException;
+import luccas33.multitenant.application.TenantIdentifier;
 import luccas33.multitenant.application.TokenUtil;
 import luccas33.multitenant.model.*;
 import luccas33.multitenant.repository.TenantRepository;
@@ -69,6 +70,7 @@ public class TenantService extends BaseService {
         } catch (Exception e) {
             throw logAndThrow("Error saving new tenant", HttpStatus.INTERNAL_SERVER_ERROR, e);
         }
+        TenantIdentifier.setCurrentTenant(newTenant.getSchema());
         createTenant(tenant);
     }
 
@@ -128,7 +130,7 @@ public class TenantService extends BaseService {
     }
 
     private boolean runScript(String script, String schema, boolean createSchema) throws SQLException {
-        Connection con = ConnectionProviderImp.loadDataSource().getConnection();
+        Connection con = MultiTenantConnectionProviderImp.getConnectionProvider(schema).getConnection();
         if (createSchema) {
             con.createStatement().execute("create schema if not exists " + schema);
         }

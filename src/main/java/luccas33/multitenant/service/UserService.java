@@ -1,9 +1,6 @@
 package luccas33.multitenant.service;
 
-import luccas33.multitenant.application.ConnectionProviderImp;
-import luccas33.multitenant.application.StatusException;
-import luccas33.multitenant.application.TokenUtil;
-import luccas33.multitenant.application.Utils;
+import luccas33.multitenant.application.*;
 import luccas33.multitenant.model.*;
 import luccas33.multitenant.repository.LoginLogRepository;
 import luccas33.multitenant.repository.UserRepository;
@@ -57,7 +54,7 @@ public class UserService extends BaseService {
             throw new StatusException("Incorrect email or password", HttpStatus.UNAUTHORIZED);
         }
 
-        ConnectionProviderImp.setCurrentTenant(tenant.getSchemaName());
+        TenantIdentifier.setCurrentTenant(tenant.getSchemaName());
         LoginLog log = new LoginLog();
         log.setUser(user);
         log.setLoggedAt(new Date());

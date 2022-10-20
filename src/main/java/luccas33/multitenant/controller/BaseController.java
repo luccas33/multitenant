@@ -1,7 +1,5 @@
 package luccas33.multitenant.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import luccas33.multitenant.application.StatusException;
 import luccas33.multitenant.model.ReturnDTO;
 import luccas33.multitenant.model.ReturnDTOImp;
