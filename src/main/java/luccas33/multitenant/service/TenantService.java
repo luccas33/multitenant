@@ -130,7 +130,7 @@ public class TenantService extends BaseService {
     }
 
     private boolean runScript(String script, String schema, boolean createSchema) throws SQLException {
-        Connection con = MultiTenantConnectionProviderImp.getConnectionProvider(schema).getConnection();
+        Connection con = MultiTenantConnectionProviderImp.getDataSource(schema).getConnection();
         if (createSchema) {
             con.createStatement().execute("create schema if not exists " + schema);
         }

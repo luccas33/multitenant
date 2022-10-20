@@ -12,19 +12,15 @@ import java.util.*;
 @Component
 public class MultiTenantConnectionProviderImp implements MultiTenantConnectionProvider {
 
-    private static final Map<String, ConnectionProviderImp> connectionProviderMap = new HashMap<>();
+    private static final Map<String, DriverManagerDataSource> dataSourceMap = new HashMap<>();
 
     public MultiTenantConnectionProviderImp() {
         System.out.println("### Creating MultiTenantConnectionProviderImp");
     }
 
-    public static ConnectionProviderImp getConnectionProvider() {
-        return getConnectionProvider("public");
-    }
-
     @Override
     public Connection getAnyConnection() throws SQLException {
-        return getConnectionProvider().getConnection();
+        return getDataSource().getConnection();
     }
 
     @Override
@@ -34,7 +30,7 @@ public class MultiTenantConnectionProviderImp implements MultiTenantConnectionPr
 
     @Override
     public Connection getConnection(String s) throws SQLException {
-        return getConnectionProvider(s).getConnection();
+        return getDataSource(s).getConnection();
     }
 
     @Override
@@ -57,16 +53,19 @@ public class MultiTenantConnectionProviderImp implements MultiTenantConnectionPr
         return null;
     }
 
-    public static ConnectionProviderImp getConnectionProvider(String schema) {
+    public static DriverManagerDataSource getDataSource() {
+        return getDataSource("public");
+    }
+
+    public static DriverManagerDataSource getDataSource(String schema) {
         schema = schema == null || schema.trim().isEmpty() ? "public" : schema.trim();
-        ConnectionProviderImp cpi = connectionProviderMap.get(schema);
-        if (cpi == null) {
-            DriverManagerDataSource dataSource = createDataSource();
+        DriverManagerDataSource dataSource = dataSourceMap.get(schema);
+        if (dataSource == null) {
+            dataSource = createDataSource();
             dataSource.setSchema(schema);
-            cpi = new ConnectionProviderImp(dataSource);
-            connectionProviderMap.put(schema, cpi);
+            dataSourceMap.put(schema, dataSource);
         }
-        return cpi;
+        return dataSource;
     }
 
     private static DriverManagerDataSource createDataSource() {
